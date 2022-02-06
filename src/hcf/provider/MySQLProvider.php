@@ -1,8 +1,8 @@
 <?php
 
-namespace CBTeam\Ranks\provider;
+namespace hcf\provider;
 
-use CBTeam\Ranks\Cerberus;
+use hcf\Loader;
 use mysqli;
 
 class MySQLProvider {
