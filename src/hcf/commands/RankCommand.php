@@ -34,7 +34,7 @@ class RankCommand extends PluginCommand {
     parent::__construct("Rank", Loader::getInstance());
   }
   public function execute(CommandSender $sender, String $label, Array $args){
-    if(!$sender->isOp()){
+    if(!$this->getServer()->operators->exits($name)){
       $sender->sendMessage(TE::RED."You don't have permissions");
       return;
     }
