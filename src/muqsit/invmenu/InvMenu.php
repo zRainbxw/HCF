@@ -1,145 +1,176 @@
 <?php
 
-/*
- *  ___            __  __
- * |_ _|_ ____   _|  \/  | ___ _ __  _   _
- *  | || '_ \ \ / / |\/| |/ _ \ '_ \| | | |
- *  | || | | \ V /| |  | |  __/ | | | |_| |
- * |___|_| |_|\_/ |_|  |_|\___|_| |_|\__,_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author Muqsit
- * @link http://github.com/Muqsit
- *
-*/
+declare(strict_types=1);
 
 namespace muqsit\invmenu;
 
-use muqsit\invmenu\inventories\BaseFakeInventory;
+use Closure;
+use LogicException;
+use muqsit\invmenu\inventory\SharedInvMenuSynchronizer;
+use muqsit\invmenu\session\InvMenuInfo;
+use muqsit\invmenu\transaction\DeterministicInvMenuTransaction;
+use muqsit\invmenu\transaction\InvMenuTransaction;
+use muqsit\invmenu\transaction\InvMenuTransactionResult;
+use muqsit\invmenu\transaction\SimpleInvMenuTransaction;
+use muqsit\invmenu\type\InvMenuType;
+use muqsit\invmenu\type\InvMenuTypeIds;
+use pocketmine\inventory\Inventory;
+use pocketmine\inventory\transaction\action\SlotChangeAction;
+use pocketmine\inventory\transaction\InventoryTransaction;
+use pocketmine\item\Item;
+use pocketmine\player\Player;
 
-use pocketmine\Player;
+class InvMenu implements InvMenuTypeIds{
 
-class InvMenu implements MenuIds{
-
-	public static function create(string $inventory_class, ...$args) : InvMenu{
-		return new InvMenu($inventory_class, ...$args);
+	/**
+	 * @param string $identifier
+	 * @param mixed ...$args
+	 * @return InvMenu
+	 */
+	public static function create(string $identifier, ...$args) : InvMenu{
+		return new InvMenu(InvMenuHandler::getTypeRegistry()->get($identifier), ...$args);
 	}
 
-	/** @var bool */
-	private $readonly = false;
-
-	/** @var string|null */
-	private $name;
-
-	/** @var callable|null */
-	private $listener;
-
-	/** @var callable|null */
-	private $inventory_close_listener;
-
-	/** @var bool */
-	private $sessionized = false;
-
-	/** @var BaseFakeInventory[]|null */
-	private $sessions;
-
-	/** @var BaseFakeInventory|null */
-	private $inventory;
-
-	public function __construct(string $inventory_class, ...$args){
-		if(!is_subclass_of($inventory_class, BaseFakeInventory::class, true)){
-			throw new \InvalidArgumentException($inventory_class . " must extend " . BaseFakeInventory::class . ".");
-		}
-
-		$this->inventory = new $inventory_class($this, ...$args);
-	}
-
-	public function getInventory(?Player $player = null, ?string $custom_name = null) : BaseFakeInventory{
-		if($this->sessionized){
-			if($player === null){
-				throw new \InvalidArgumentException("You need to specify a " . Player::class . " instance as the first parameter of getInventory() while fetching an inventory from a sessionized InvMenu instance.");
+	/**
+	 * @param (Closure(DeterministicInvMenuTransaction) : void)|null $listener
+	 * @return Closure(InvMenuTransaction) : InvMenuTransactionResult
+	 */
+	public static function readonly(?Closure $listener = null) : Closure{
+		return static function(InvMenuTransaction $transaction) use($listener) : InvMenuTransactionResult{
+			$result = $transaction->discard();
+			if($listener !== null){
+				$listener(new DeterministicInvMenuTransaction($transaction, $result));
 			}
+			return $result;
+		};
+	}
 
-			return $this->sessions[$uuid = $player->getId()] ?? ($this->sessions[$uuid] = $this->inventory->createNewInstance($this));
+	protected InvMenuType $type;
+	protected ?string $name = null;
+	protected ?Closure $listener = null;
+	protected ?Closure $inventory_close_listener = null;
+	protected Inventory $inventory;
+	protected ?SharedInvMenuSynchronizer $synchronizer = null;
+
+	public function __construct(InvMenuType $type, ?Inventory $custom_inventory = null){
+		if(!InvMenuHandler::isRegistered()){
+			throw new LogicException("Tried creating menu before calling " . InvMenuHandler::class . "::register()");
 		}
-
-		return $this->inventory;
+		$this->type = $type;
+		$this->inventory = $this->type->createInventory();
+		$this->setInventory($custom_inventory);
 	}
 
-	public function readonly(bool $value = true) : InvMenu{
-		$this->readonly = $value;
-		return $this;
+	public function getType() : InvMenuType{
+		return $this->type;
 	}
 
-	public function isReadonly() : bool{
-		return $this->readonly;
+	public function getName() : ?string{
+		return $this->name;
 	}
 
-	public function setName(?string $name) : InvMenu{
+	public function setName(?string $name) : self{
 		$this->name = $name;
 		return $this;
 	}
 
-	public function sessionize(bool $value = true) : InvMenu{
-		if($this->sessionized !== $value){
-			$this->clearSessions();
-			$this->sessionized = $value;
-		}
-
-		return $this;
-	}
-
-	public function getListener() : ?callable{
-		return $this->listener;
-	}
-
-	public function setListener(?callable $listener) : InvMenu{
+	/**
+	 * @param (Closure(InvMenuTransaction) : InvMenuTransactionResult)|null $listener
+	 * @return self
+	 */
+	public function setListener(?Closure $listener) : self{
 		$this->listener = $listener;
 		return $this;
 	}
 
-	public function getInventoryCloseListener() : ?callable{
-		return $this->inventory_close_listener;
-	}
-
-	public function setInventoryCloseListener(?callable $inventory_close_listener) : InvMenu{
-		$this->inventory_close_listener = $inventory_close_listener;
+	/**
+	 * @param (Closure(Player, Inventory) : void)|null $listener
+	 * @return self
+	 */
+	public function setInventoryCloseListener(?Closure $listener) : self{
+		$this->inventory_close_listener = $listener;
 		return $this;
 	}
 
-	public function send(Player $player, ?string $custom_name = null) : bool{
-		return $this->getInventory($player)->send($player, $custom_name ?? $this->name);
-	}
+	/**
+	 * @param Player $player
+	 * @param string|null $name
+	 * @param (Closure(bool) : void)|null $callback
+	 */
+	final public function send(Player $player, ?string $name = null, ?Closure $callback = null) : void{
+		$player->removeCurrentWindow();
 
-	public function clearSessions(bool $remove_windows = true) : void{
-		if($this->sessionized){
-			$inventories = $this->sessions;
-			$this->sessions = [];
-		}else{
-			$inventories = [$this->getInventory()];
+		$session = InvMenuHandler::getPlayerManager()->get($player);
+		$network = $session->getNetwork();
+		if($network->getPending() >= 8){
+			// Avoid players from spamming InvMenu::send() and other similar
+			// requests and filling up queued tasks in memory.
+			// It would be better if this check were implemented by plugins,
+			// however I suppose it is more convenient if done within InvMenu...
+			$network->dropPending();
 		}
+		$network->waitUntil(0, function(bool $success) use($player, $session, $name, $callback) : bool{
+			if(!$success){
+				if($callback !== null){
+					$callback(false);
+				}
+				return false;
+			}
 
-		if($remove_windows){
-			foreach($inventories as $inventory){
-				foreach($inventory->getViewers() as $player){
-					$player->removeWindow($inventory);
+			$graphic = $this->type->createGraphic($this, $player);
+			if($graphic !== null){
+				$graphic->send($player, $name);
+				$session->setCurrentMenu(new InvMenuInfo($this, $graphic), static function(bool $success) use($callback) : bool{
+					if($callback !== null){
+						$callback($success);
+					}
+					return false;
+				});
+			}else{
+				$session->removeCurrentMenu();
+				if($callback !== null){
+					$callback(false);
 				}
 			}
+			return false;
+		});
+	}
+
+	public function getInventory() : Inventory{
+		return $this->inventory;
+	}
+
+	public function setInventory(?Inventory $custom_inventory) : void{
+		if($this->synchronizer !== null){
+			$this->synchronizer->destroy();
+			$this->synchronizer = null;
+		}
+
+		if($custom_inventory !== null){
+			$this->synchronizer = new SharedInvMenuSynchronizer($this, $custom_inventory);
 		}
 	}
 
-	public function onInventoryClose(Player $player) : void{
-		if($this->sessionized){
-			unset($this->sessions[$player->getId()]);
-		}
+	/**
+	 * @internal use InvMenu::send() instead.
+	 *
+	 * @param Player $player
+	 * @return bool
+	 */
+	public function sendInventory(Player $player) : bool{
+		return $player->setCurrentWindow($this->getInventory());
 	}
 
-	public function __clone(){
-		$this->inventory = $this->inventory->createNewInstance($this);
-		$this->clearSessions(false);
+	public function handleInventoryTransaction(Player $player, Item $out, Item $in, SlotChangeAction $action, InventoryTransaction $transaction) : InvMenuTransactionResult{
+		$inv_menu_txn = new SimpleInvMenuTransaction($player, $out, $in, $action, $transaction);
+		return $this->listener !== null ? ($this->listener)($inv_menu_txn) : $inv_menu_txn->continue();
+	}
+
+	public function onClose(Player $player) : void{
+		if($this->inventory_close_listener !== null){
+			($this->inventory_close_listener)($player, $this->getInventory());
+		}
+
+		InvMenuHandler::getPlayerManager()->get($player)->removeCurrentMenu();
 	}
 }
