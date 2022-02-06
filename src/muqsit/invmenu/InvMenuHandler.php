@@ -1,76 +1,46 @@
 <?php
 
-/*
- *  ___            __  __
- * |_ _|_ ____   _|  \/  | ___ _ __  _   _
- *  | || '_ \ \ / / |\/| |/ _ \ '_ \| | | |
- *  | || | | \ V /| |  | |  __/ | | | |_| |
- * |___|_| |_|\_/ |_|  |_|\___|_| |_|\__,_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author Muqsit
- * @link http://github.com/Muqsit
- *
-*/
+declare(strict_types=1);
 
 namespace muqsit\invmenu;
 
-use muqsit\invmenu\inventories\BaseFakeInventory;
-
-use pocketmine\event\inventory\InventoryTransactionEvent;
-use pocketmine\event\Listener;
-use pocketmine\inventory\transaction\action\SlotChangeAction;
+use InvalidArgumentException;
+use LogicException;
+use muqsit\invmenu\session\PlayerManager;
+use muqsit\invmenu\type\InvMenuTypeRegistry;
 use pocketmine\plugin\Plugin;
+use pocketmine\Server;
 
-class InvMenuHandler implements Listener{
+final class InvMenuHandler{
 
-	/** @var Plugin|null */
-	private static $registrant;
+	private static ?Plugin $registrant = null;
+	private static InvMenuTypeRegistry $type_registry;
+	private static PlayerManager $player_manager;
+
+	public static function register(Plugin $plugin) : void{
+		if(self::isRegistered()){
+			throw new InvalidArgumentException("{$plugin->getName()} attempted to register " . self::class . " twice.");
+		}
+
+		self::$registrant = $plugin;
+		self::$type_registry = new InvMenuTypeRegistry();
+		self::$player_manager = new PlayerManager(self::getRegistrant());
+		Server::getInstance()->getPluginManager()->registerEvents(new InvMenuEventHandler(self::getPlayerManager()), $plugin);
+	}
 
 	public static function isRegistered() : bool{
 		return self::$registrant instanceof Plugin;
 	}
 
 	public static function getRegistrant() : Plugin{
-		return self::$registrant;
+		return self::$registrant ?? throw new LogicException("Cannot obtain registrant before registration");
 	}
 
-	public static function register(Plugin $plugin) : void{
-		if(self::isRegistered()){
-			throw new \Error($plugin->getName() . "attempted to register " . self::class . " twice.");
-		}
-
-		self::$registrant = $plugin;
-		$plugin->getServer()->getPluginManager()->registerEvents(new InvMenuHandler(), $plugin);
+	public static function getTypeRegistry() : InvMenuTypeRegistry{
+		return self::$type_registry;
 	}
 
-	private function __construct(){
-	}
-
-	/**
-	 * @param InventoryTransactionEvent $event
-	 * @priority NORMAL
-	 * @ignoreCancelled true
-	 */
-	public function onInventoryTransaction(InventoryTransactionEvent $event) : void{
-		$transaction = $event->getTransaction();
-		foreach($transaction->getActions() as $action){
-			if($action instanceof SlotChangeAction){
-				$inventory = $action->getInventory();
-				if($inventory instanceof BaseFakeInventory){
-					$menu = $inventory->getMenu();
-					$listener = $menu->getListener();
-
-					if(($listener !== null && !$listener($transaction->getSource(), $action->getSourceItem(), $action->getTargetItem(), $action)) || $menu->isReadonly()){
-						$event->setCancelled();
-						return;
-					}
-				}
-			}
-		}
+	public static function getPlayerManager() : PlayerManager{
+		return self::$player_manager;
 	}
 }
