@@ -30,3 +30,4 @@ class RepairCommand extends PluginCommand {
 		}
 	}
 }
+}
