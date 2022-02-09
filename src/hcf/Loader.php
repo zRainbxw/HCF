@@ -12,3 +12,8 @@ use libs\muqsit\invmenu\InvMenuHandler;
     {
         
         $this->getLogger()->info("==========================================");     $this->getLogger()->info("==========================================");
+      $this->getServer()->getNetwork()->setName(str_replace(["&"], ["§"], Loader::getConfiguration("config")->get("server-name")));
+
+
+
+
