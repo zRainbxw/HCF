@@ -1,5 +1,8 @@
-<p light="center">
-  <img src="resources/images/icon.png" />
+<p align="center">
+  <img src="resources/images/icon.png" /><br />
+  <p></p>
 </p>
 
-`Development stopped until February 24 this year`
+<p align="center">
+https://img.shields.io/badge/-Development%20stopped%20until%20February%2024%20this%20year-red?style=for-the-badge
+</p>
