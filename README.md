@@ -4,8 +4,15 @@
 </p>
 
 <p align="center">
-<a href="https://discord.com/"><img src="https://img.shields.io/discord/919968090182258688?label=discord&logo=discord&style=for-the-badge" alt="Discord></a><br />
-<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/iSrDxv/HCF?logo=github&style=for-the-badge">
+<img alt="GitHub commit checks state" src="https://img.shields.io/github/checks-status/iSrDxv/HCF/main?style=for-the-badge">
+<!--<img alt="GitHub release (latest SemVer including pre-releases)" src="https://img.shields.io/github/v/release/iSrDxv/HCF?display_name=tag&include_prereleases&sort=semver&style=for-the-badge">-->
+<img alt="GitHub" src="https://img.shields.io/github/license/iSrDxv/HCF?style=for-the-badge">
+<img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/iSrDxv?logo=github&style=for-the-badge">
+<a href="https://discord.com/"><img src="https://img.shields.io/discord/919968090182258688?label=discord&logo=discord&style=for-the-badge" alt="Discord></a><br>
+<img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/iSrDxv/HCF/main?style=for-the-badge"><br>
+<img alt="GitHub commits since latest release (by SemVer)" src="https://img.shields.io/github/commits-since/iSrDxv/HCF/latest/main?sort=semver&style=for-the-badge"><br>
+<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/iSrDxv/HCF?style=for-the-badge">
+
 </p>
 
 # IMPORTANT
