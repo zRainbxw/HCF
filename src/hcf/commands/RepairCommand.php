@@ -23,5 +23,11 @@ class RepairCommand extends PluginCommand {
 		/** 
 		 * luego Lo sigo si alguien quiere seguirlo no problemaxd 
 		 */
+		 	public function execute(CommandSender $sender, String $label, Array $args) : void {
+		if(empty($args)){
+            $sender->sendMessage(TE::RED."Argument #1 is not valid for command syntax");
+            return;
+		}
 	}
+}
 }
