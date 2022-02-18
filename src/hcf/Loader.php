@@ -19,7 +19,7 @@ use libs\invmenu\InvMenuHandler;
  
  class Loader extends PluginBase {
    
-   public const PLUGIN_VERSION = "0.4.0";
+   public const PLUGIN_VERSION = "0.4.1";
    
    public static Loader $instance;
    

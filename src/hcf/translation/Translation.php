@@ -16,7 +16,7 @@ class Translation
 
     * TODO: Only for version 2.0.0
 
-    public $language;
+    private $language;
 
     
 
@@ -30,11 +30,11 @@ class Translation
 
     
 
-    public $config = new Config(Loader::getInstance()->getDataFolder() . $this->language . DIRECTORY_SEPARATOR . "messages.yml", Config::YAML);
+    private $config = new Config(Loader::getInstance()->getDataFolder() . $this->language . DIRECTORY_SEPARATOR . "messages.yml", Config::YAML);
 
    */ 
 
-    public $config = new Config(Loader::getInstance()->getDataFolder() . "messages.yml", Config::YAML);
+    private $config = new Config(Loader::getInstance()->getDataFolder() . "messages.yml", Config::YAML);
 
     
 
@@ -130,7 +130,7 @@ class Translation
 
       }
 
-    return $message;
+    return (isset($args)) ? $message : $config->get($character);
 
     }
 
