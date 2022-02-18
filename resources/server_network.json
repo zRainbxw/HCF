@@ -1,8 +1,9 @@
 {
  "optimization": [
    {
-   "enabled": true,
+   "enabled": false,
    "max_tps": 20,
+   "max-chunks": 0,
    "speed-max": 100,
    "optimize-chunk": false,
    "optimize-level": false,
