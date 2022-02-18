@@ -52,6 +52,9 @@ use libs\invmenu\InvMenuHandler;
 ");
      $this->getLogger()->notice("Plugin enabled!!");
      $this->getLogger()->info("==========================================");
+$this->getServer()->getNetwork()->setName(str_replace(["&"], ["§"], Loader::getConfiguration("config")->get("Motd")));
+
+    
    }
    
    public static function getInstance(): Loader
