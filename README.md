@@ -16,6 +16,4 @@
 
 # Starting
 [Documentation](https://github.com/iSrDxv/HCF/wiki)
-
-# IMPORTANT
-Join our [discord](https://discord.gg/VPb6fBczp9) so you never lack help
+[Discord](https://discord.gg/VPb6fBczp9)
