@@ -1,5 +1,16 @@
 <?php
 
+/**
+*   __  __  ____     ____           ____     _____   ____    ____      
+*  /\ \/\ \/\  _`\  /\  _`\        /\  _`\  /\  __`\/\  _`\ /\  _`\    
+*  \ \ \_\ \ \ \/\_\\ \ \L\_\      \ \ \/\_\\ \ \/\ \ \ \L\ \ \ \L\_\  
+*  \ \  _  \ \ \/_/_\ \  _\/_______\ \ \/_/_\ \ \ \ \ \ ,  /\ \  _\L  
+*   \ \ \ \ \ \ \L\ \\ \ \//\______\\ \ \L\ \\ \ \_\ \ \ \\ \\ \ \L\ \
+*    \ \_\ \_\ \____/ \ \_\\/______/ \ \____/ \ \_____\ \_\ \_\ \____/
+*     \/_/\/_/\/___/   \/_/           \/___/   \/_____/\/_/\/ /\/___/ 
+*
+**/
+
 namespace hcf;
 
 use pocketmine\plugin\PluginBase;
@@ -8,7 +19,7 @@ use libs\invmenu\InvMenuHandler;
  
  class Loader extends PluginBase {
    
-   public const PLUGIN_VERSION = "0.3.5";
+   public const PLUGIN_VERSION = "0.4.0";
    
    public static Loader $instance;
    
@@ -29,6 +40,16 @@ use libs\invmenu\InvMenuHandler;
      $this->saveDefaultConfig();
      $this->getServer()->getNetwork()->setName(str_replace("&", "§", $this->getConfig()->get("server-name")) . "§r | " . $this->getConfig()->get("server-color") . $this->getConfig()->get("server-description"));
      $this->getLogger()->info("=========================================="); 
+     $this->getLogger()->notice("
+ **      **   ******  ********         ******    *******   *******   ********
+/**     /**  **////**/**/////         **////**  **/////** /**////** /**///// 
+/**     /** **    // /**             **    //  **     //**/**   /** /**      
+/**********/**       /*******  *****/**       /**      /**/*******  /******* 
+/**//////**/**       /**////  ///// /**       /**      /**/**///**  /**////  
+/**     /**//**    **/**            //**    **//**     ** /**  //** /**      
+/**     /** //****** /**             //******  //*******  /**   //**/********
+//      //   //////  //               //////    ///////   //     // //////// 
+");
      $this->getLogger()->notice("Plugin enabled!!");
      $this->getLogger()->info("==========================================");
    }
