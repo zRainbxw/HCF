@@ -4,18 +4,25 @@ namespace hcf\provider;
 
 use pocketmine\utils\Config;
 
-use hcf\HCFLoad;
+use hcf\Loader;
 
-class YamlProvider {
- 
-/** @here HCFLoad **/ 
-public $load = null;
+class YAMLProvider {
+  
+  /** @here HCFLoad **/ 
+  public $loader;
 
-public function __construct(HCFLoad $main){
-$this->load = $main;
-$this->init();
+  public function __construct(Loader $main)
+  {
+  $this->loader = $main;
+  $this->init();
+  }
+
+  public function init(): void 
+  {
+    if ($this->loader->getDataFolder()) {
+      @mkdir($this->loader->getDataFolder());
+    }
+  }
+
 }
-
-public function init(): void {}
-
 ?>
