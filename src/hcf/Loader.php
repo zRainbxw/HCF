@@ -71,7 +71,6 @@ $this->getServer()->getNetwork()->setName(str_replace(["&"], ["§"], Loader::get
         SQLite3Provider::disconnect();
         MysqlProvider::disconnect();
 
-        YamlProvider::save();
     }
    
 }
