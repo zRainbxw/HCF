@@ -4,9 +4,6 @@ namespace hcf;
 
 use hcf\Loader;
 
-use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\event\player\PlayerQuitEvent;
-
 class Listeners 
 {
   
