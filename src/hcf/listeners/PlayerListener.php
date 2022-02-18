@@ -29,7 +29,7 @@ class PlayerListener extends Listener
   {
     $player = $event->getPlayer();
     
-    $event->setQuitMessage(TE::GRAY."[".TE::RED."-".TE::GRAY."]".TE::RED.$player->getName()." left the server.");
+    $event->setQuitMessage(TE::GRAY."[".TE::RED."-".TE::GRAY."]".TE::RED.$player->getName().TE::GRAY." left the server.");
   }
   
   public function creation(PlayerCreationEvent $event): void 
