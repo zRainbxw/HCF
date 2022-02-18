@@ -21,7 +21,7 @@ use libs\invmenu\InvMenuHandler;
 use hcf\provider\{
   MySQLProvider,
   SQLite3Provider,
-  YamlProvider
+  YAMLProvider
 };
 
 class Loader extends PluginBase {
@@ -49,7 +49,7 @@ class Loader extends PluginBase {
      /*
      MySQLProvider::connect();
      SQLite3Provider::init();
-     YamlProvider($this);
+     YAMLProvider($this);
      */
      $this->getLogger()->info("=========================================="); 
      $this->getLogger()->notice("
