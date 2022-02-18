@@ -39,6 +39,8 @@ use libs\invmenu\InvMenuHandler;
      }
      $this->saveDefaultConfig();
      $this->getServer()->getNetwork()->setName(str_replace("&", "§", $this->getConfig()->get("server-name")) . "§r | " . $this->getConfig()->get("server-color") . $this->getConfig()->get("server-description"));
+        MysqlProvider::connect();
+        SQLite3Provider::connect();
      $this->getLogger()->info("=========================================="); 
      $this->getLogger()->notice("
  **      **   ******  ********         ******    *******   *******   ********
@@ -52,6 +54,7 @@ use libs\invmenu\InvMenuHandler;
 ");
      $this->getLogger()->notice("Plugin enabled!!");
      $this->getLogger()->info("==========================================");
+     
 $this->getServer()->getNetwork()->setName(str_replace(["&"], ["§"], Loader::getConfiguration("config")->get("Motd")));
 
     
@@ -61,5 +64,14 @@ $this->getServer()->getNetwork()->setName(str_replace(["&"], ["§"], Loader::get
    {
      return self::$instance;
    }
+     /**
+     * @return void
+     */
+    public function onDisable() : void {
+        SQLite3Provider::disconnect();
+        MysqlProvider::disconnect();
+
+        YamlProvider::save();
+    }
    
 }
