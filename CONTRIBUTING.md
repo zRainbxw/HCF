@@ -37,4 +37,9 @@ This means:
 • Don't change things unrelated to the plugin goal
 
 • Do not change the code already written just to make it look "Better"
+
 ## Change Proposal
+Change proposals are problems and discussions, a function implementation or behavior changes, are used to have comments from collaborators and the community about a specific change, to decide if it is a good idea or not to implement it
+
+### Send it Change Proposal
+This part is under revision, please wait a bit to be able to finish it, this is essential for the development of hcf.
