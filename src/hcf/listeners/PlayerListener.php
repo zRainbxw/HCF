@@ -2,6 +2,7 @@
 
 namespace hcf\listeners;
 
+use pocketmine\utils\TextFormat as TE;
 use pocketmine\event\{
   Listener,
   player\PlayerJoinEvent,
@@ -20,11 +21,15 @@ class PlayerListener extends Listener
   public function joinEvent(PlayerJoinEvent $event): void
   {
     $player = $event->getPlayer();
-  }
+    
+    $event->setJoinMessage(TE::GRAY."[".TE::GREEN."+".TE::GRAY."] ".TE::GREEN.$player->getName().TE::GRAY." entered the server.");
+ }
   
   public function quitEvent(PlayerQuitEvent $event): void
   {
     $player = $event->getPlayer();
+    
+    $event->setQuitMessage(TE::GRAY."[".TE::RED."-".TE::GRAY."]".TE::RED.$player->getName()." left the server.");
   }
   
   public function creation(PlayerCreationEvent $event): void 
