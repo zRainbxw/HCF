@@ -7,21 +7,22 @@ use pocketmine\utils\Config;
 use hcf\Loader;
 
 class YAMLProvider {
-  
-  /** @here HCFLoad **/ 
-  public $loader;
 
-  public function __construct(Loader $main)
+  public static function init(): void 
   {
-  $this->loader = $main;
-  $this->init();
-  }
-
-  public function init(): void 
-  {
-    if ($this->loader->getDataFolder()) {
-      @mkdir($this->loader->getDataFolder());
+    if (!is_dir(Loader::getInstance()->getDataFolder())) {
+      @mkdir(Loader::getInstance()->getDataFolder());
     }
+    if (!is_dir(Loader::getInstance()->getDataFolder() . "backups" . DIRECTORY_SEPARATOR)) {
+      @mkdir(Loader::getInstance()->getDataFolder() . "backups" . DIRECTORY_SEPARATOR);
+    }
+    if (!is_dir(Loader::getInstance()->getDataFolder() . "players" . DIRECTORY_SEPARATOR)) {
+      @mkdir(Loader::getInstance()->getDataFolder() . "players" . DIRECTORY_SEPARATOR);
+    }
+    Loader::getInstance()->saveResource("listcrates.yml");
+    Loader::getInstance()->saveResource("listitems.yml");
+    Loader::getInstance()->saveResource("messages.yml");
+    Loader::getInstance()->getLogger()->notice(Text::GREEN . "YAMLProvider ⋙ uploaded successfully");
   }
 
 }
