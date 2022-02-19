@@ -25,12 +25,12 @@ class PlayerHCF extends Player
     $sql->execute();
   }
   
-  public function setFactionRole(string $role): void
+  public function setFactionRank(string $rank): void
   {
-    $this->factionRole = $role;
+    $this->factionRole = $rank;
     $sql = SQLite3Provider::getDatabase()->prepare("UPDATE players SET factionRank = :factionRank WHERE username = :username;");
     $sql->bindParam(":username", $this->getName());
-    $sql->bindParam(":factionRank", $role);
+    $sql->bindParam(":factionRank", $rank);
     $sql->execute();
   }
   
