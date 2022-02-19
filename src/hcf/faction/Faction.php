@@ -72,4 +72,21 @@ class Faction
     
   }
   
+  /**
+  * @param String $playerName
+  * @return bool
+  */
+  public function inFaction(String $playerName) : bool {
+    $data = SQLite3Provider::getDatabase()->query("SELECT * FROM player_data WHERE playerName = '$playerName';");
+    $result = $data->fetchArray(SQLITE3_ASSOC);
+    if(!empty($result)){
+      $data->finalize();
+      return true;
+    }else{
+      $data->finalize();
+      return false;
+    }
+    $data->finalize();
+    return false;
+  }
 }
