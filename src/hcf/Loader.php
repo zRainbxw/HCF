@@ -16,18 +16,22 @@ namespace hcf;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 
-use hcf\Utils\Utils;
-
 use pocketmine\entity\EntityDataHelper;
 use pocketmine\entity\EntityFactory;
 
 use libs\invmenu\InvMenuHandler;
+ 
+use hcf\EventListener;
  
 use hcf\provider\{
   MySQLProvider,
   SQLite3Provider,
   YAMLProvider
 };
+
+use hcf\Utils\Utils;
+
+use hcf\discord\Logger;
 
 class Loader extends PluginBase {
    
@@ -36,7 +40,9 @@ class Loader extends PluginBase {
    public static Loader $instance;
    
    private static Utils $utils;
- 
+   
+   public Logger $discord;
+   
    public function onLoad(): void 
    {
      if (self::PLUGIN_VERSION !== $this->getDescription()->getVersion()) {
@@ -55,9 +61,11 @@ class Loader extends PluginBase {
      $this->getServer()->getNetwork()->setName(str_replace("&", "§", $this->getConfig()->get("server-name")) . "§r | " . $this->getConfig()->get("server-color") . $this->getConfig()->get("server-description"));
      /*
      MySQLProvider::connect();
-     SQLite3Provider::init();
-     YAMLProvider($this);
      */
+     SQLite3Provider::init();
+     YAMLProvider::init();
+     $this->discord = new Logger($this->getConfig()->get("webhook-url")/*, $this->getConfig()->get("webhook-check")*/);
+     (new EventListener())->init();
      $this->getLogger()->info("=========================================="); 
      $this->getLogger()->notice("
  **      **   ******  ********         ******    *******   *******   ********
@@ -81,6 +89,11 @@ class Loader extends PluginBase {
    public static function getInstance(): Loader
    {
      return self::$instance;
+   }
+   
+   public static function getDiscord(): Logger
+   {
+     return $this->discord;
    }
    
    public static function getUtils() : Utils {

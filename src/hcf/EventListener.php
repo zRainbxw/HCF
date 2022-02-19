@@ -4,20 +4,16 @@ namespace hcf;
 
 use hcf\Loader;
 
+use hcf\listeners\{
+  PlayerListener
+};
+
 class Listeners 
 {
   
-  /** @var Loader **/
-  private Loader $loader;
-  
-  public function __construct(Loader $main)
-  {
-    $this->loader = $main;
-  }
-  
   public function init(): void
   {
-  $loader = $this->loader;
+  $loader = Loader::getInstance();
   $loader->getServer()->getPluginManager()->registerEvents(new PlayerListener(), $loader);
   }
   
