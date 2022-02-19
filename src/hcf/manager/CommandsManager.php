@@ -1,14 +1,19 @@
-<?php 
+<?php
 
-namespace: hcf/manager;
+namespace hcf\manager;
 
-use pocketmine\Server;
-use pocketmine\command\Command;
-use pocketmine\command\CommandMap;
+use hcf\Loader;
 
-class CommandRegistery{
-    
-    public static function init(): void{
-    $Loader->getServer()->getCommandMap()->register("Fixall", new RepairCommand("Fixall",$Loader)); 
+use pocketmine\player\Player;
 
-  
+use pocketmine\utils\TextFormat as TE;
+
+class CommandsManager {
+
+    /**
+    * @return void
+    */
+    public static function init() : void {
+        Loader::getInstance()->getServer()->getCommandMap()->register("lff", new LFFCommand());
+    }
+}
