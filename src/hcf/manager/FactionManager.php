@@ -59,6 +59,7 @@ class FactionManager
       $player->setFaction(null);
       $player->setFactionRole(null);
     }
+    // code.. SQLite3
     unset($faction);
   }
   
