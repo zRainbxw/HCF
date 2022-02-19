@@ -14,6 +14,6 @@ class CommandsManager {
     * @return void
     */
     public static function init() : void {
-        Loader::getInstance()->getServer()->getCommandMap()->register("lff", new LFFCommand());
+        Loader::getInstance()->getServer()->getCommandMap()->register("/lff", new LFFCommand());
     }
 }
