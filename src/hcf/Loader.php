@@ -16,6 +16,11 @@ namespace hcf;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 
+use hcf\Utils\Utils;
+
+use pocketmine\entity\EntityDataHelper;
+use pocketmine\entity\EntityFactory;
+
 use libs\invmenu\InvMenuHandler;
  
 use hcf\provider\{
@@ -30,6 +35,8 @@ class Loader extends PluginBase {
    
    public static Loader $instance;
    
+   private static Utils $utils;
+ 
    public function onLoad(): void 
    {
      if (self::PLUGIN_VERSION !== $this->getDescription()->getVersion()) {
@@ -64,6 +71,11 @@ class Loader extends PluginBase {
 ");
      $this->getLogger()->notice("Plugin enabled!!");
      $this->getLogger()->info("==========================================");
+    
+    $entityFactory = EntityFactory::getInstance();
+		$entityFactory->register(FakeVillager::class, function(World $world, CompoundTag $nbt) : LogoutVillager {
+			return new LogoutVillager(EntityDataHelper::parseLocation($nbt, $world), $nbt);
+		}, ["FakeVillager"]);
    }
    
    public static function getInstance(): Loader
@@ -71,4 +83,8 @@ class Loader extends PluginBase {
      return self::$instance;
    }
    
+   public static function getUtils() : Utils {
+        return self::$utils;
+    }
+ 
 }
