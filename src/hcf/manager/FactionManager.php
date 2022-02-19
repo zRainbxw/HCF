@@ -42,15 +42,11 @@ class FactionManager
     }
     // code.. (SQLite3)
     $username = $owner->getName();
-    /** Set the player role for the faction **/
-    $playerSql = SQLite3Provider::getDatabase()->prepare("INSERT INTO players(username, factionName, fantionRank) VALUES (:username, :factionName, :factionRank);");
-    $playerSql->bindParam(":username", $username);
-    $playerSql->bindParam(":factionName", $name);
-    $playerSql->bindParam(":factionRank", self::OWNER);
-    $playerSql->execute();
     /** @var Faction(factionName, positionHome, membersArray, balanceInt, dtrFloat) **/
     $this->factions[$name] = new Faction($name, null, [$username], 0, self::DTR_MAX);
     $owner->setFaction($this->factions[$name]);
+    /** @funciton Set the player role for the faction **/
+    $owner->setFactionRole(self::OWNER);
   }
   
   public function deleteFaction(string $name): void
@@ -61,6 +57,7 @@ class FactionManager
     $faction = $this->factions[$name];
     foreach($faction->getMembers() as $player) {
       $player->setFaction(null);
+      $player->setFactionRole(null);
     }
     unset($faction);
   }

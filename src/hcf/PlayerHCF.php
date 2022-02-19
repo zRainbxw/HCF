@@ -12,4 +12,36 @@ class PlayerHCF extends Player
   
   private $goldenApple = 0;
   
+  private Faction $faction;
+  
+  private string $factionRole;
+  
+  public function setFaction(Faction $faction): void
+  {
+    $this->faction = $faction;
+    $sql = SQLite3Provider::getDatabase()->prepare("INSERT INTO players(username, factionName) VALUES (:username, :factionName);");
+    $sql->bindParam(":username", $this->getName());
+    $sql->bindParam(":factionName", $faction->getName());
+    $sql->execute();
+  }
+  
+  public function setFactionRole(string $role): void
+  {
+    $this->factionRole = $role;
+    $sql = SQLite3Provider::getDatabase()->prepare("UPDATE players SET factionRank = :factionRank WHERE username = :username;");
+    $sql->bindParam(":username", $this->getName());
+    $sql->bindParam(":factionRank", $role);
+    $sql->execute();
+  }
+  
+  public function getFaction(): Faction
+  {
+    return $this->faction;
+  }
+  
+  public function getFactionRole(): string
+  {
+    return $this->factionRole;
+  }
+  
 }
