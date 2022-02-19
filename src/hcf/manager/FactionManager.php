@@ -6,12 +6,14 @@ use pocketmine\utils\SingletonTrait;
 
 use hcf\Loader;
 use hcf\PlayerHCF;
+use hcf\provider\SQLite3Provider;
 
 class FactionManager 
 {
   use SingletonTrait;
   
-  public const OWNER = "Owner";
+  public const OWNER = "owner";
+  public const MEMBER = "member";
   
   public const DTR_MAX = Loader::getInstance()->getConfig("faction")["maxPlayers"] . .5;
   public const DTR_REGENERATE_TIME = 3600;
@@ -40,8 +42,12 @@ class FactionManager
     }
     // code.. (SQLite3)
     $username = $owner->getName();
-    /** @function Set the player role for the faction **/
-    $owner->setFactionRole(self::OWNER);
+    /** Set the player role for the faction **/
+    $playerSql = SQLite3Provider::getDatabase()->prepare("INSERT INTO players(username, factionName, fantionRank) VALUES (:username, :factionName, :factionRank);");
+    $playerSql->bindParam(":username", $username);
+    $playerSql->bindParam(":factionName", $name);
+    $playerSql->bindParam(":factionRank", self::OWNER);
+    $playerSql->execute();
     /** @var Faction(factionName, positionHome, membersArray, balanceInt, dtrFloat) **/
     $this->factions[$name] = new Faction($name, null, [$username], 0, self::DTR_MAX);
     $owner->setFaction($this->factions[$name]);
@@ -55,7 +61,6 @@ class FactionManager
     $faction = $this->factions[$name];
     foreach($faction->getMembers() as $player) {
       $player->setFaction(null);
-      $player->setFactionRole(null);
     }
     unset($faction);
   }
