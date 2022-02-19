@@ -16,9 +16,6 @@ border-limit: 1000
 webhook-url: ""
 webhook-check: false
 
-# GUI
-gui-enabled: true
-
 # Cooldowns
 cooldown: 
  EnderPearl: 30

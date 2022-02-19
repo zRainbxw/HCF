@@ -80,10 +80,10 @@ class Loader extends PluginBase {
      $this->getLogger()->notice("Plugin enabled!!");
      $this->getLogger()->info("==========================================");
     
-    $entityFactory = EntityFactory::getInstance();
+   /* $entityFactory = EntityFactory::getInstance();
 		$entityFactory->register(FakeVillager::class, function(World $world, CompoundTag $nbt) : LogoutVillager {
 			return new LogoutVillager(EntityDataHelper::parseLocation($nbt, $world), $nbt);
-		}, ["FakeVillager"]);
+		}, ["FakeVillager"]);*/
    }
    
    public static function getInstance(): Loader
