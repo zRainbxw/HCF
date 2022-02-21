@@ -7,6 +7,7 @@ use hcf\Loader;
 use hcf\commands\GiveMoneyCommand;
 use hcf\commands\LFFCommand;
 use hcf\commands\MyMoneyCommand;
+use hcf\commands\StreamCommand;
 
 use pocketmine\player\Player;
 
@@ -22,5 +23,6 @@ class CommandsManager {
         
         Loader::getInstance()->getServer()->getCommandMap()->register("/lff", new LFFCommand());
         Loader::getInstance()->getServer()->getCommandMap()->register("/money", new MyMoneyCommand());
+        Loader::getInstance()->getServer()->getCommandMap()->register("/stream", new StreamCommand());
     }
 }
