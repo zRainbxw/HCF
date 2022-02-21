@@ -18,7 +18,7 @@ class StreamCommand extends Command {
 
         parent::__construct("stream", Loader::getInstance());
         parent::setAliases(["live"]);
-        $this->setPermission('fly.lobby');
+        $this->setPermission('stream.command');
         parent::setDescription("an exclusive command for streamers");
 
     }
