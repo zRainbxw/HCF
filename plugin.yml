@@ -6,3 +6,8 @@ authors: [iSrDxv,imDevi,vzSpell,OPgDev,zBxutii]
 prefix: "HCF-Core"
 website: "github.com/iSrDxv/HCF"
 description: Plugin HardCore Fanctions for Pocketmine-MP
+
+permissions:
+  stream.command:
+    description: Use this command to alert you stream.
+    default: op
