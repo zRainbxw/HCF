@@ -20,6 +20,7 @@ class StreamCommand extends Command {
     parent::__construct("stream", Loader::getInstance());
     $this->setDescription("Stream command.");
     parent::setAliases(["live"]);
+    parent::setPermission("stream.command.use");
   }
   
   public function execute(CommandSender $sender, String $labe, Array $args) : void {
